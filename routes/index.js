@@ -1,42 +1,44 @@
 const express = require('express');
 const router = express.Router();
 
+/* Creating database */
+
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('./data/db.json');
+const db = low(adapter);
+
 /* GET home page. */
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-const records = [
-  { "name": "Metallica",
-    "title": "Unforgiven",
-    "year": "1998"
-  },
-
-  { "name": "Beatles",
-    "title": "Let It Be",
-    "year": "1975"
-  },
-
-  { "name": "System Of A Down",
-    "title": "Chop Suey",
-    "year": "2002"
-  }
-]
-
-
 router.get('/api/records', function(req, res) {
-  res.json(records)
+  res.json(db)
 })
+
+/* Writing a new entry to the database */
+
+db.get('db')
+  .push()
+.write();
 
 router.post('/api/records', (req, res) => {
   
-  records.push({
+  db.push({
 
+    /* {
+      "name": "Vladislav Malezhik",
+      "title": "Die, Yuri Antonov, Die!",
+      "year": "1976"
+    } */
+    
     name: req.body.name,
     title: req.body.title,
     year: req.body.year,
   
-  });
+  }).write();
   
   res.redirect("/api/records");
 });
