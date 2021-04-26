@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const { MongoClient } = require('mongodb');
 
 /** ROUTERS */
 const indexRouter = require('./routes/index');
@@ -18,6 +19,30 @@ const app = express();
 
 /** LOGGING */
 app.use(logger('dev'));
+
+
+/* MONGO DB STUFF */
+async function connectDB() {
+    const url = "mongodb+srv://admin:Ey69x0HUeZA3nqOK@cluster0.dw8qc.mongodb.net/recordshop?retryWrites=true&w=majority"
+    const client = new MongoClient(url, { useUnifiedTopology: true });
+
+    try {
+        await client.connect()
+        app.locals.db = client.db()
+        await listDatabases(client)
+    } catch (error) {
+        console.error(error)
+    }
+};
+
+async function listDatabases(client) {
+    databasesList = await client.db().admin().listDatabases();
+ 
+    console.log("Databases:");
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+};
+
+connectDB().catch(console.error);
 
 
 /** SETTING UP LOWDB */
