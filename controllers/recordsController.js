@@ -26,6 +26,7 @@ exports.updateRecord = (req, res, next) => {
   const { id } = req.params;
   Record.findByIdAndUpdate(id, req.body, { new: true }, (err, entry) => {
     if (err) return { error: err };
+    console.log("WHATTHAFUCK")
     res.json(entry);
   });
 };
